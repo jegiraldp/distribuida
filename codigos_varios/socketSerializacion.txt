@@ -1,0 +1,61 @@
+//MÉTODO ENVIAR DEL SERVIDOR
+public static void enviarObjeto(Socket s) throws IOException{
+
+    //objeto
+    persona p = new persona(123, "jorge");
+    //
+    ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
+    oos.writeObject(p);
+
+}//enviar
+
+
+/////////////
+
+
+///MÉTODO RECIBIR CLIENTE
+
+ public static void recibirObjeto(Socket s) throws IOException, ClassNotFoundException{
+         
+        ObjectInputStream entrada = new ObjectInputStream(s.getInputStream());
+        persona pp = (persona)entrada.readObject();
+        
+        System.out.println(pp.getCedula()+"--"+pp.getNombre());
+        
+    }//recibir
+
+
+
+
+//////////////////////////////
+CLASE PERSONA - LA CLASE PERSONA DEBE ESTAR EN EL LADO CLIENTE Y LADO SERVIDOR
+////////////////////////////
+import java.io.Serializable;
+
+
+public class persona implements Serializable{
+    
+private int cedula;
+//private transient String nombre;
+private String nombre;
+
+    public persona(int cedula, String nombre) {
+        this.cedula = cedula;
+        this.nombre = nombre;
+    }
+
+    public int getCedula() {
+        return cedula;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+   
+}
+
+///////////////////////////////

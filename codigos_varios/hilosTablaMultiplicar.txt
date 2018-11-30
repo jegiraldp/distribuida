@@ -1,0 +1,93 @@
+CLASE INICIO
+/////////////////////
+
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ *
+ * @author jorge
+ */
+public class inicio {
+    static hilo[] vector;
+    static int acum=0;
+    public static void main (String[] arg) throws InterruptedException, IOException{
+		
+		
+		InputStreamReader isr = new InputStreamReader(System.in);
+		BufferedReader br = new BufferedReader(isr);
+		System.out.println("Digite numero hilos");
+		int numHilos=Integer.parseInt(br.readLine());
+		vector = new hilo[numHilos];
+		
+		
+		//este for crea los hilos y los inicia
+		for (int i = 0; i < numHilos; i++) {
+			
+			vector[i] = new hilo();
+			vector[i].start();
+		}
+		
+		//este realiza join en cada hilo
+		for (int ii = 0; ii < numHilos; ii++) {
+		
+			vector[ii].join();			
+		}
+		System.out.println("Suma Total :"+acum);
+	}	
+    
+}
+//////////////////////////////////////////////////
+CLASE HILO
+////////////////////////////////////////////////
+
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+public class hilo extends Thread{
+	
+
+	
+	static int b=0, acum=0;
+	
+	
+	//Este metodo incrementa la variable b
+	static void setVariable(){
+	b++;
+	}
+	
+	//Este metodo retorna la variable b
+	static int getVariable(){
+		return b;
+	}
+	
+	
+	
+	public void run(){
+		setVariable(); //se incrementa
+		int a = getVariable(); //se captura
+		
+		for (int i = 1; i < 11; i++) {
+			System.out.println(a+" * "+i+" ="+(a*i));
+			inicio.acum = inicio.acum +(a*i);
+                    try {
+                        sleep(500);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(hilo.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+		}
+		
+	}//run
+	
+}
+/////////////////

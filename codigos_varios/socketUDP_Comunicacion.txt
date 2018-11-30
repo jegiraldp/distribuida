@@ -1,0 +1,141 @@
+////////////////CLIENTE/////////////
+
+import java.io.*;
+import java.net.*;
+
+public class clienteUDP {
+    static byte[] msg, msgRecibir;
+    static DatagramPacket packet, packetRecibir; 
+    static DatagramSocket socket;
+    static int tam;
+    static String dato;
+        
+  public static void iniciar() throws SocketException{
+     socket = new DatagramSocket(12346);
+     msg=new byte[1024];
+  }//iniciar
+  
+  public static void enviar(String data) throws IOException{
+      msg = new byte[data.length()];
+      msg = data.getBytes();
+      packet = new DatagramPacket(msg, msg.length,new InetSocketAddress("127.0.0.1", 12345));
+      socket.send(packet);
+      System.out.println("C:envío -> "+data);
+      recibir();
+      
+     
+  }//enviar
+  
+  public static void recibir() throws IOException{
+  /////Recibir
+      msgRecibir = new byte[1024];
+      packetRecibir=new DatagramPacket(msgRecibir,1024);
+      socket.receive(packetRecibir);
+      tam=packetRecibir.getLength();
+      dato = new String(packetRecibir.getData());
+      dato=limpiar(dato,tam);
+      System.out.println("S:Recibo -> "+dato);
+  }//recibir
+  
+  
+  
+  public static String limpiar(String dato, int tam){
+    dato= dato.substring(0,tam);
+    dato=dato.trim();
+    return dato;
+}//limpiar
+}//class 
+
+////////////////////////////////////
+
+////////////////SERVIDOR/////////////
+import java.net.*;
+import java.io.*;
+
+public class servidorUDP{
+    static DatagramPacket packet, packetEnviar;
+    static DatagramSocket s;
+    static byte[] msg, msgEnviar;
+    static int tam;
+    static String dato, datoEnviar;
+
+public static void iniciar() throws IOException {
+    s = new DatagramSocket(12345);
+    msg=new byte[1024];
+    packet = new DatagramPacket(msg,1024);
+    System.out.println("Ok");
+       
+    while(true){
+    recibirDatagramas();
+    }
+}//iniciar
+
+
+
+public static void recibirDatagramas() throws IOException{
+        s.receive(packet);
+        tam=packet.getLength();
+        dato = new String(packet.getData());
+        dato=limpiar(dato,tam);
+        System.out.println("S:Recibo -> "+dato);
+        enviar();
+        
+        ////
+}//recibir
+
+public static void enviar() throws SocketException, IOException{
+///Enviar
+        datoEnviar="El cuadrado";
+        msgEnviar=new byte[datoEnviar.length()];
+        msgEnviar=datoEnviar.getBytes();
+        packetEnviar = new DatagramPacket(msgEnviar, msgEnviar.length,new InetSocketAddress(packet.getAddress(), 12346));
+        s.send(packetEnviar);
+}///
+
+public static String limpiar(String dato, int tam){
+    dato= dato.substring(0,tam);
+    dato=dato.trim();
+    return dato;
+}//limpiar
+
+}//clase
+
+////////////////////////////////////
+
+////////////////INICIO CLIENTE/////////////
+
+import java.io.*;
+import java.net.*;
+
+public class inicioCliente {
+    
+    public static void main(String[] arg) throws SocketException, IOException{
+        String dat;
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        clienteUDP.iniciar();
+        
+        while(true){
+            System.out.print("\n-> ");
+            dat = br.readLine();
+            clienteUDP.enviar(dat);
+       }//while
+    }//main
+}
+
+
+////////////////////////////////////
+
+////////////////INICIO SERVIDOR/////////////
+
+
+import java.io.IOException;
+
+
+public class inicioServidor {
+    
+    public static void main(String[] arg) throws IOException{
+        servidorUDP.iniciar();
+    }//main
+    
+}
+////////////////////////////////////

@@ -1,0 +1,79 @@
+///Cajero
+
+
+public class cajero{
+    
+    String nombre;
+    cliente[] c;
+    int tiempoRecibo;
+
+    public cajero(String nombre,cliente[] c, int tiempoRecibo) {
+        this.nombre = nombre;
+        this.c=c;
+        this.tiempoRecibo=tiempoRecibo;
+    }//
+    
+    public void atender(){
+        
+        for (int i = 0; i < this.c.length; i++) {
+            System.out.println("\n--"+this.nombre+"-atendiendo-"+this.c[i].nombre);
+            for (int j = 0; j < this.c[i].recibos.length; j++) {
+                System.out.println(this.nombre+"-"+this.c[i].nombre+"-recibo:"+(j+1));
+                try {
+                    Thread.sleep(this.tiempoRecibo);
+                } catch (InterruptedException ex) {}
+            }        }//
+        
+    }//
+    
+    
+    
+}//class
+
+
+////////////////////////cliente
+public class cliente {
+    
+    public String nombre;
+    public int[] recibos;
+
+    public cliente(String nombre, int[] recibos) {
+        this.nombre = nombre;
+        this.recibos = recibos;
+    }
+}
+
+/////////inicio
+
+public class inicio {
+    
+    public static void main(String[] arg) throws InterruptedException{
+        
+       int[] recibos= {2000,3000,5000,7000};
+       cliente[] losClientes= new cliente[4];
+       losClientes[0]=new cliente("clienteUno", recibos);
+       losClientes[1]=new cliente("clienteDos", recibos);
+       losClientes[2]=new cliente("clienteTres", recibos);
+       losClientes[3]=new cliente("clienteCuatro", recibos);
+       
+       long ti = System.currentTimeMillis();
+       
+       cajero caj1 = new cajero("cajero1",losClientes, 500);
+       caj1.atender();
+              
+       cajero caj2 = new cajero("cajero2",losClientes, 500);
+       caj2.atender();
+       
+       long tf = System.currentTimeMillis();
+       
+        System.out.println("\nTiempo total "+(tf-ti)+" milisegundos");
+        
+    }//
+}
+
+
+
+
+
+
+

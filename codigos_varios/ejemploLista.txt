@@ -1,0 +1,65 @@
+///////////CLASE NODO////////////
+public class nodo {
+    
+    private int valor;
+    private nodo enlace;
+
+    public nodo(int valor, nodo enlace) {
+        this.valor = valor;
+        this.enlace = enlace;
+    }
+
+    public int getValor() {
+        return valor;
+    }
+
+    public void setValor(int valor) {
+        this.valor = valor;
+    }
+
+    public nodo getEnlace() {
+        return enlace;
+    }
+
+    public void setEnlace(nodo enlace) {
+        this.enlace = enlace;
+    }
+    
+    
+}//CLASS
+
+//////////CLASE LISTA////////////CONTIENE MAIN///////
+public class lista {
+    nodo primero, auxPrimero;
+    
+    
+     public lista() {
+        this.primero = null;
+    }//constructor
+    
+    public void nuevo(int valor){
+	primero = new nodo(valor, primero);	
+    }//insertNode
+    
+    public void printList(){
+    	String impri="";
+        auxPrimero=primero;
+    	while(primero!=null){
+            System.out.println(primero.getValor());
+            primero = primero.getEnlace();
+    	}//while
+    	primero=auxPrimero;
+    	
+    }//printList
+    
+    
+    public static void main(String[] arg){
+        lista l = new lista();
+        l.nuevo(1);
+        l.nuevo(2);
+        l.nuevo(3);
+        l.printList();
+    }
+    
+}//CLASS
+////////////////

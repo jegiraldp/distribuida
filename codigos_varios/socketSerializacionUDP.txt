@@ -1,0 +1,192 @@
+CLIENTE:
+---------
+import java.io.*;
+import java.net.*;
+
+public class clienteUDP {
+    static byte[] msg, msgRecibir;
+    static DatagramPacket packet, packetRecibir; 
+    static DatagramSocket socket;
+    static int tam;
+    static String dato;
+        
+  public static void iniciar() throws SocketException{
+     socket = new DatagramSocket(12346);
+     msg=new byte[1024];
+      inicioCliente.lblResultado.setText("Cliente Ok");
+  }//iniciar
+  
+  public static void enviar(String data) throws IOException, ClassNotFoundException{
+      msg = new byte[data.length()];
+      msg = data.getBytes();
+      packet = new DatagramPacket(msg, msg.length,new InetSocketAddress("127.0.0.1", 12345));
+      socket.send(packet);
+      inicioCliente.lblResultado.setText("c:envío -> "+data);
+      recibir();
+      
+     
+  }//enviar
+  
+  public static void recibir() throws IOException, ClassNotFoundException{
+  /////Recibir
+      msgRecibir = new byte[1024];
+      packetRecibir=new DatagramPacket(msgRecibir,1024);
+      socket.receive(packetRecibir);
+      
+      
+      ///
+      
+      ByteArrayInputStream baos = new ByteArrayInputStream(msgRecibir);
+      ObjectInputStream oos = new ObjectInputStream(baos);
+      persona pp = (persona)oos.readObject();
+      //
+      
+      inicioCliente.lblResultado.setText(pp.getNombre()+"-"+pp.getCedula());
+      
+      /*tam=packetRecibir.getLength();
+      dato = new String(packetRecibir.getData());
+      dato=limpiar(dato,tam);*/
+  }//recibir
+  
+  
+  
+  public static String limpiar(String dato, int tam){
+    dato= dato.substring(0,tam);
+    dato=dato.trim();
+    return dato;
+}//limpiar
+}//class 
+
+------------------------------------
+SERVIDOR
+------------------------------------
+import java.net.*;
+import java.io.*;
+
+public class servidorUDP{
+    static DatagramPacket packet, packetEnviar;
+    static DatagramSocket s;
+    static byte[] msg, msgEnviar;
+    static int tam, cua;
+    static String dato, datoEnviar;
+
+public static void iniciar() throws IOException, FileNotFoundException, ClassNotFoundException {
+    s = new DatagramSocket(12345);
+    msg=new byte[1024];
+    packet = new DatagramPacket(msg,1024);
+    System.out.println("Ok");
+    
+    //
+    serializa.accion();
+    System.out.println("Serialización OK");
+       
+    while(true){
+    recibirDatagramas();
+    }
+}//iniciar
+
+
+
+public static void recibirDatagramas() throws IOException, FileNotFoundException, ClassNotFoundException{
+        s.receive(packet);
+        tam=packet.getLength();
+        dato = new String(packet.getData());
+        dato=limpiar(dato,tam);
+        System.out.println("S:Recibo -> "+dato);
+        if(dato.equals("serializa")){
+            System.out.println("object");
+            msgEnviar=serializa.accion();
+            enviar();
+        }
+        
+        
+        
+        
+        ////
+}//recibir
+
+public static void enviar() throws SocketException, IOException{
+///Enviar
+        packetEnviar = new DatagramPacket(msgEnviar, msgEnviar.length,new InetSocketAddress(packet.getAddress(), 12346));
+        s.send(packetEnviar);
+}///
+
+public static String limpiar(String dato, int tam){
+    dato= dato.substring(0,tam);
+    dato=dato.trim();
+    return dato;
+}//limpiar
+
+}//clase
+
+----------------------------
+INICIO SERVIDOR
+------------------------------
+
+
+
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+
+public class inicioServidor {
+    
+    public static void main(String[] arg) throws IOException, FileNotFoundException, ClassNotFoundException{
+        servidorUDP.iniciar();
+    }//main
+    
+}
+
+-----------------------------
+SERIALIZA
+-----------------------------
+import java.io.*;
+
+public class serializa {
+    
+    public static byte[] accion() throws FileNotFoundException, IOException, ClassNotFoundException{
+    
+        persona p = new persona(123, "jorge");
+   
+   
+     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ObjectOutputStream oos = new ObjectOutputStream(baos);
+    oos.writeObject(p);
+    oos.flush();
+    byte[] arr= baos.toByteArray();
+    return arr;
+       
+    }//cargar
+    
+}
+-------------------------------
+PERSONA
+-------------------------------
+import java.io.Serializable;
+
+
+public class persona implements Serializable{
+    
+private int cedula;
+//private transient String nombre;
+private String nombre;
+
+    public persona(int cedula, String nombre) {
+        this.cedula = cedula;
+        this.nombre = nombre;
+    }
+
+    public int getCedula() {
+        return cedula;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+   
+}
